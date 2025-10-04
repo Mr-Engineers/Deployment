@@ -57,16 +57,16 @@ jobs:
                 target: "~/app/"
 
 
-            - name: Update compose version
-              uses: appleboy/scp-action@v0.1.7
-              with:
-                host: ${{ env.DEPLOYMENT_SERVER }}
-                username: ${{ env.DEPLOYMENT_USER }}
-                key: ${{ secrets.DEPLOY_SSH_KEY }}
-                script: |
-                    sudo curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
-                    sudo chmod +x /usr/local/bin/docker-compose
-                    docker-compose version
+            # - name: Update compose version
+            #   uses: appleboy/scp-action@v0.1.7
+            #   with:
+            #     host: ${{ env.DEPLOYMENT_SERVER }}
+            #     username: ${{ env.DEPLOYMENT_USER }}
+            #     key: ${{ secrets.DEPLOY_SSH_KEY }}
+            #     script: |
+            #         sudo curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+            #         sudo chmod +x /usr/local/bin/docker-compose
+            #         docker-compose version
 
 
             - name: Stop old container
