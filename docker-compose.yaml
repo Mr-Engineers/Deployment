@@ -6,7 +6,8 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
-    command: ["redis-server", "--appendonly", "yes", "--save", ""]  # tylko AOF, brak RDB
+    command: ["redis-server", "--appendonly", "yes"]  # snapshoty RDB włączone
+    privileged: true   # pełne uprawnienia, potrzebne do background jobs
     restart: unless-stopped
 
   fastapi:
