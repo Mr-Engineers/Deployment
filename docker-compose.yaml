@@ -7,18 +7,19 @@ services:
     volumes:
       - redis_data:/data
     command: ["redis-server", "--appendonly", "yes"]  # snapshoty RDB włączone
-    privileged: true   # pełne uprawnienia, potrzebne do background jobs
+    privileged: true   # pozwala background jobs w Redis
     restart: unless-stopped
 
   fastapi:
     image: kmaku4/hackyeah-backend:latest
     container_name: fastapi-game
-    volumes:
-      - .:/app
     ports:
       - "8000:8000"
+    volumes:
+      - ./app:/app/app  # montujemy tylko katalog app, aby uvicorn widział moduł
     depends_on:
       - redis
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
     restart: unless-stopped
 
 volumes:
