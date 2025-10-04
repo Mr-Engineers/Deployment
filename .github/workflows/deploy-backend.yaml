@@ -30,7 +30,10 @@ jobs:
                 AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
                 AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
 
-            - name: Copy docker-compose.yaml to server
+            - name: Checkout repository
+              uses: actions/checkout@v3
+
+            - name: Copy file to the server
               uses: appleboy/scp-action@v0.1.7
               with:
                 host: ${{ env.DEPLOYMENT_SERVER }}
