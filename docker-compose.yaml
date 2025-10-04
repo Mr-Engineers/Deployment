@@ -1,5 +1,3 @@
-version: "2.4"
-
 services:
   redis:
     image: kmaku4/hackyeah-redis:latest
@@ -8,6 +6,8 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
+    command: ["redis-server", "--appendonly", "yes", "--save", ""]  # tylko AOF, brak RDB
+    restart: unless-stopped
 
   fastapi:
     image: kmaku4/hackyeah-backend:latest
@@ -18,6 +18,7 @@ services:
       - "8000:8000"
     depends_on:
       - redis
+    restart: unless-stopped
 
 volumes:
   redis_data:
