@@ -33,6 +33,20 @@ jobs:
             - name: Checkout repository
               uses: actions/checkout@v3
 
+            - name: Remove old compose
+              uses: appleboy/ssh-action@v0.1.8
+              with:
+                host: ${{ env.DEPLOYMENT_SERVER }}
+                username: ${{ env.DEPLOYMENT_USER }}
+                key: ${{ secrets.DEPLOY_SSH_KEY }}
+                script: |
+                        if [ -f ~/app/docker-compose.yaml ]; then
+                          rm ~/app/docker-compose.yaml
+                          echo "Old docker-compose.yaml removed"
+                        else
+                          echo "No such file"
+                        fi
+
             - name: Copy file to the server
               uses: appleboy/scp-action@v0.1.7
               with:
