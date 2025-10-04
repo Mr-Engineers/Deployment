@@ -16,7 +16,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - /.:/app  # montujemy cały katalog projektu
+      - ./:/app  # montujemy cały katalog projektu
     working_dir: /app  # katalog roboczy w kontenerze
     depends_on:
       - redis
