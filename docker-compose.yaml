@@ -24,7 +24,7 @@ services:
     restart: unless-stopped
 
   frontend:
-    image: kmaku4/hackyeah-frontend:latest   
+    image: kmaku4/hackyeah-front:latest   
     container_name: nextjs-game
     ports:
       - "3000:3000"
