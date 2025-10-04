@@ -37,12 +37,12 @@ jobs:
                 username: ${{ env.DEPLOYMENT_USER }}
                 key: ${{ secrets.DEPLOY_SSH_KEY }}
                 script: |
-                    container_id=$(docker ps -q --filter "ancestor=kmaku4/hacathon-backend")
+                    container_id=$(docker ps -q --filter "ancestor=kmaku4/hackyeah-backend")
                     if [ -n "$container_id" ]; then
                       echo "Stopping container with ID: $container_id"
                       docker stop $container_id
                     else
-                      echo "No running container found for hacathon-backend"
+                      echo "No running container found for hackyeah-backend"
                     fi
 
             - name: Login to docker registry
@@ -53,7 +53,7 @@ jobs:
                 key: ${{ secrets.DEPLOY_SSH_KEY }}
                 script: |
                     echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-                    docker pull ${{ secrets.DOCKER_USERNAME }}/hacathon-backend:latest
+                    docker pull ${{ secrets.DOCKER_USERNAME }}/hackyeah-backend:latest
 
             - name: Run new image version
               uses: appleboy/ssh-action@v0.1.8
@@ -65,14 +65,7 @@ jobs:
                     docker run  \
                     -d \
                     -p 5000:5000 \
-                    -e DATABASE=${{ secrets.DATABASE }} \
-                    -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
-                    -e SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
-                    -e SUPABASE_KEY=${{ secrets.SUPABASE_KEY }} \
-                    -e SECRET_KEY=${{ secrets.SECRET_KEY }} \
-                    -e MONGO_URI="${{ secrets.MONGO_URI }}" \
-                    -e OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} \
-                    kmaku4/hacathon-backend:latest
+                    kmaku4/hackyeah-backend:latest
 
             - name: Remove Github Actions IP from the security group
               if: always()
