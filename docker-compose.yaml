@@ -6,8 +6,8 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
-    command: ["redis-server", "--appendonly", "yes"]  # snapshoty RDB włączone
-    privileged: true   # pozwala background jobs w Redis
+    command: ["redis-server", "--appendonly", "yes"]
+    privileged: true
     restart: unless-stopped
 
   fastapi:
@@ -16,7 +16,8 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./app:/app/app  # montujemy tylko katalog app, aby uvicorn widział moduł
+      - .:/app  # montujemy cały katalog projektu
+    working_dir: /app  # katalog roboczy w kontenerze
     depends_on:
       - redis
     command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
