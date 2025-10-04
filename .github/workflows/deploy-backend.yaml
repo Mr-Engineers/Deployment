@@ -30,52 +30,38 @@ jobs:
                 AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
                 AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
 
+            - name: Copy project files to server
+              run: |
+                ssh -o StrictHostKeyChecking=no ${{ env.DEPLOYMENT_USER }}@${{ env.DEPLOYMENT_SERVER }} "mkdir -p ~/app"
+                rsync -avz --exclude '.git' ./ ${{ env.DEPLOYMENT_USER }}@${{ env.DEPLOYMENT_SERVER }}:~/app
+
             - name: Stop old container
               uses: appleboy/ssh-action@v0.1.8
               with:
                 host: ${{ env.DEPLOYMENT_SERVER }}
                 username: ${{ env.DEPLOYMENT_USER }}
-                key: ${{ secrets.DEPLOY_SSH_KEY }}
+                key: ${{ secrets.SSH_KEY }}
                 script: |
-                    container_id=$(docker ps -q --filter "ancestor=kmaku4/hackyeah-backend")
-                    if [ -n "$container_id" ]; then
-                      echo "Stopping container with ID: $container_id"
-                      docker stop $container_id
-                    else
-                      echo "No running container found for hackyeah-backend"
-                    fi
+                    cd ~/app
+                    docker-compose down
 
-            - name: Login to docker registry
+            - name: Pull latest images
               uses: appleboy/ssh-action@v0.1.8
               with:
                 host: ${{ env.DEPLOYMENT_SERVER }}
                 username: ${{ env.DEPLOYMENT_USER }}
-                key: ${{ secrets.DEPLOY_SSH_KEY }}
+                key: ${{ secrets.SSH_KEY }}
                 script: |
-                    echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUN_LOGIN }} --password-stdin
-                    docker pull ${{ secrets.DOCKER_USERNAME }}/hackyeah-backend:latest
+                    cd ~/app
+                    docker-compose pull
 
-            - name: Run new image version
+            - name: Start application
               uses: appleboy/ssh-action@v0.1.8
               with:
                 host: ${{ env.DEPLOYMENT_SERVER }}
                 username: ${{ env.DEPLOYMENT_USER }}
-                key: ${{ secrets.DEPLOY_SSH_KEY }}
+                key: ${{ secrets.SSH_KEY }}
                 script: |
-                    docker run  \
-                    -d \
-                    -p 5000:5000 \
-                    kmaku4/hackyeah-backend:latest
+                    cd ~/app
+                    docker-compose up -d
 
-            - name: Remove Github Actions IP from the security group
-              if: always()
-              run: |
-                  aws ec2 revoke-security-group-ingress      \
-                    --group-id ${{ env.AWS_SECURITY_GROUP }} \
-                    --protocol tcp                           \
-                    --port 22                                \
-                    --cidr ${{ steps.ip.outputs.ipv4 }}/32
-              env:
-                  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-                  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-                  AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}

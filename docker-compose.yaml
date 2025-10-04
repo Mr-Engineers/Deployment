@@ -1,0 +1,21 @@
+services:
+  redis:
+    image: kmaku4/hackyeah-redis:latest
+    container_name: redis-game
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  fastapi:
+    image: kmaku4/hackyeah-backend:latest
+    container_name: fastapi-game
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+
+volumes:
+  redis_data:
