@@ -40,7 +40,7 @@ jobs:
               with:
                 host: ${{ env.DEPLOYMENT_SERVER }}
                 username: ${{ env.DEPLOYMENT_USER }}
-                key: ${{ secrets.SSH_KEY }}
+                key: ${{ secrets.DEPLOY_SSH_KEY }}
                 script: |
                     echo "dupa"
 
