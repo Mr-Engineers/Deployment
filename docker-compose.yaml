@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
   redis:
     image: kmaku4/hackyeah-redis:latest
@@ -15,10 +17,22 @@ services:
     container_name: fastapi-game
     ports:
       - "8000:8000"
-    working_dir: /app  # katalog roboczy w kontenerze
+    working_dir: /app
     depends_on:
       - redis
     command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    restart: unless-stopped
+
+  frontend:
+    image: kmaku4/hackyeah-frontend:latest   
+    container_name: nextjs-game
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_SUPABASE_URL: "https://bxmqyoumevcinnzhommt.supabase.co"
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ4bXF5b3VtZXZjaW5uemhvbW10Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQxMjA4MDUsImV4cCI6MjA1OTY5NjgwNX0.ZSIke1eSkrvMWQjGibc6gBOF9CmJmuv0hr18NQRuZPo"
+    depends_on:
+      - fastapi
     restart: unless-stopped
 
 volumes:
