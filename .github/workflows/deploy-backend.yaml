@@ -39,6 +39,11 @@ jobs:
                 script: |
                     echo "dupa"
 
+            - name: Debug SSH Key Format
+              run: |
+                echo "${{ secrets.DEPLOY_SSH_KEY }}" | head -5
+
+
             - name: Stop old container
               uses: appleboy/ssh-action@v0.1.8
               with:
