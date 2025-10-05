@@ -2,12 +2,14 @@ version: "3.9"
 
 services:
   redis:
-    image: redis:latest
+    image: redis:8.2
     container_name: redis-game
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
+    command: ["redis-server", "--appendonly", "yes", "--dir", "/data"]
+    user: "0"  # jeśli nadal pojawia się 'Operation not permitted'
 
   fastapi:
     image: kmaku4/hackyeah-backend:latest
