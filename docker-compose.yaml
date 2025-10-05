@@ -2,15 +2,12 @@ version: "3.9"
 
 services:
   redis:
-    image: kmaku4/hackyeah-redis:latest
+    image: redis:latest
     container_name: redis-game
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
-    command: ["redis-server", "--appendonly", "yes"]
-    privileged: true
-    restart: unless-stopped
 
   fastapi:
     image: kmaku4/hackyeah-backend:latest
@@ -29,7 +26,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      NEXT_PUBLIC_BACKEND_URL: "/api"
+      NEXT_PUBLIC_BACKEND_URL: "/api"   
     depends_on:
       - fastapi
     restart: unless-stopped
