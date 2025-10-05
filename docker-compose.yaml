@@ -35,5 +35,13 @@ services:
       - fastapi
     restart: unless-stopped
 
+  nginx:
+    image: kmaku4/hackyeah-proxy
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+      - fastapi
+
 volumes:
   redis_data:
